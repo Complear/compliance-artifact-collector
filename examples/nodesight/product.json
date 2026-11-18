@@ -1,0 +1,35 @@
+{
+  "subject": {
+    "name": "NodeSight",
+    "version": "2.3.0",
+    "provider": "Example Imaging Ltd (fictional)",
+    "intended_purpose": "Segments lung nodules on chest CT and reports a malignancy likelihood to the radiologist.",
+    "description": "NodeSight is CE-marked software that segments lung nodules on chest CT with a convolutional network and reports a malignancy likelihood to the radiologist. It was trained and bias-tested on 40,000 annotated patient scans."
+  },
+  "facts": {
+    "ai_system": true, "prohibited_practice": false, "mdr_class": "IIb", "annex_iii_area": "none",
+    "art6_3_exception": false, "profiling": false, "special_category_data": true, "remote_biometric_id": false,
+    "interacts_with_persons": false, "synthetic_content": false, "emotion_or_biometric_categorisation": false
+  },
+  "sbom": "sbom.cdx.json",
+  "image": {"ref": "registry.example.com/nodesight", "digest": "sha256:9f2c4a1e5b7d8c3f6a0e1d2b4c5a6f7e8d9c0b1a2f3e4d5c6b7a8f9e0d1c2b3a"},
+  "evaluations": [
+    {
+      "tool": "AI Testing Framework",
+      "name": "Nodule detection, held-out test set",
+      "version": "2026-11",
+      "date": "2026-11-10",
+      "metrics": [
+        {"name": "sensitivity", "value": 0.94, "n": 1200, "higher_is_better": true},
+        {"name": "specificity", "value": 0.89, "n": 1200, "higher_is_better": true},
+        {"name": "sensitivity_gap_by_sex", "value": 0.02, "n": 1200, "higher_is_better": false}
+      ],
+      "supports": ["Art.15(1)", "Art.15(3)", "Art.4a(1)", "Annex IV(2)(g)"]
+    }
+  ],
+  "certificates": [
+    {"kind": "notified_body_certificate", "issuer": "Example Notified Body (fictional)", "number": "EX-MDR-0042",
+     "regulation": "MDR (EU) 2017/745 Annex IX", "valid_from": "2025-03-01", "valid_until": "2030-02-28", "file": "certificate.pdf"},
+    {"kind": "declaration_of_conformity", "issuer": "Example Imaging Ltd (fictional)", "number": "DoC-NS-2.3", "valid_from": "2026-01-15"}
+  ]
+}

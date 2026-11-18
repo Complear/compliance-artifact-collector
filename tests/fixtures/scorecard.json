@@ -1,0 +1,62 @@
+{
+  "schema_version": "0.1",
+  "subject": {
+    "system": "Obligation-mapping reader (baseline)",
+    "model": "mistralai/Ministral-3-3B-Instruct-2512-GGUF",
+    "model_revision": "Q4_K_M",
+    "provider": "Complear"
+  },
+  "benchmark": {
+    "scope_refs": [
+      "Art. 5",
+      "Art. 6",
+      "Art. 9-15",
+      "Art. 43",
+      "Art. 49",
+      "Art. 50",
+      "Annex III"
+    ],
+    "name": "Compliance Draft Benchmark",
+    "version": "0.1.0",
+    "dataset_sha256": "3d48d164f32ce8230d5ebeff3fa8fec14e49b639e5b80057ece776ef26da4413",
+    "split": "test"
+  },
+  "run": {
+    "date": "2026-11-13",
+    "environment": "local",
+    "reference": "results/evaluation.json"
+  },
+  "metrics": [
+    {
+      "name": "clause_coverage",
+      "value": 0.9203,
+      "higher_is_better": true,
+      "ai_act_refs": [
+        "Art.15(3)",
+        "Annex IV(2)(g)"
+      ],
+      "n": 79
+    },
+    {
+      "name": "clause_precision",
+      "value": 0.9111,
+      "higher_is_better": true,
+      "ai_act_refs": [
+        "Art.15(3)",
+        "Annex IV(2)(g)"
+      ],
+      "n": 79
+    },
+    {
+      "name": "under_classification_rate",
+      "value": 0.0253,
+      "higher_is_better": false,
+      "ai_act_refs": [
+        "Art.15(3)",
+        "Annex IV(2)(g)"
+      ],
+      "n": 79
+    }
+  ],
+  "limitations": "Synthetic cases; expected answers derived by a rule engine from reviewed facts; the regulatory review sample is pending."
+}

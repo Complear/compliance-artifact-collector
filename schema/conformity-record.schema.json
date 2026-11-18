@@ -1,0 +1,720 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/complear/compliance-artifact-collector/schema/conformity-record.schema.json",
+  "title": "Conformity record",
+  "description": "The compliance artefacts of one AI system at one point in time, each tagged with the framework clauses it is evidence for. Version 0.3: several frameworks per record (`scopes`), `supports` as {framework, citation} pairs, `subject.language`, and test-report evaluations.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "record_id",
+    "created_at",
+    "collector",
+    "subject",
+    "scopes",
+    "artefacts"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "0.3"
+    },
+    "record_id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "collector": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "version"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "version": {
+          "type": "string"
+        }
+      }
+    },
+    "subject": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "version",
+        "provider"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "version": {
+          "type": "string",
+          "minLength": 1
+        },
+        "provider": {
+          "type": "string",
+          "minLength": 1
+        },
+        "intended_purpose": {
+          "type": "string"
+        },
+        "language": {
+          "type": "string",
+          "pattern": "^[a-z]{2,3}(-[A-Za-z0-9]{2,8})*$",
+          "description": "BCP 47 language of the subject's texts and of the titles the collector wrote."
+        }
+      }
+    },
+    "artefacts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "type",
+          "title",
+          "supports",
+          "data"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z]+-[0-9]{1,4}$"
+          },
+          "type": {
+            "enum": [
+              "sbom",
+              "signature",
+              "evaluation",
+              "certificate",
+              "classification"
+            ]
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1
+          },
+          "supports": {
+            "description": "What this artefact is evidence for.",
+            "type": "array",
+            "maxItems": 100,
+            "items": {
+              "$ref": "#/$defs/tag"
+            }
+          },
+          "source": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "path",
+              "sha256"
+            ],
+            "properties": {
+              "path": {
+                "type": "string"
+              },
+              "sha256": {
+                "$ref": "#/$defs/sha256"
+              }
+            }
+          },
+          "data": {
+            "type": "object"
+          }
+        },
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "type": {
+                  "const": "sbom"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "data": {
+                  "$ref": "#/$defs/sbom"
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "type": {
+                  "const": "signature"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "data": {
+                  "$ref": "#/$defs/signature"
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "type": {
+                  "const": "evaluation"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "data": {
+                  "$ref": "#/$defs/evaluation"
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "type": {
+                  "const": "certificate"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "data": {
+                  "$ref": "#/$defs/certificate"
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "type": {
+                  "const": "classification"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "data": {
+                  "$ref": "#/$defs/classification"
+                }
+              }
+            }
+          }
+        ]
+      },
+      "maxItems": 200
+    },
+    "limitations": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "scopes": {
+      "description": "Per framework: which clauses apply to the subject, and how that was decided.",
+      "type": "array",
+      "maxItems": 20,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "framework",
+          "method",
+          "answers",
+          "clauses"
+        ],
+        "properties": {
+          "framework": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "key",
+              "version"
+            ],
+            "properties": {
+              "key": {
+                "$ref": "#/$defs/framework_key"
+              },
+              "version": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          },
+          "method": {
+            "enum": [
+              "facts_supplied",
+              "reader",
+              "supplied"
+            ],
+            "description": "facts_supplied/reader: scoped by the collector's own engine; supplied: decided elsewhere and carried as given."
+          },
+          "answers": {
+            "description": "The framework's scoping questions, answered.",
+            "type": "object",
+            "additionalProperties": {
+              "type": "string",
+              "maxLength": 255
+            }
+          },
+          "facts": {
+            "type": "object"
+          },
+          "tier": {
+            "enum": [
+              "out_of_scope",
+              "prohibited",
+              "high_risk_6_1",
+              "high_risk_6_2",
+              "limited",
+              "minimal"
+            ]
+          },
+          "clauses": {
+            "type": "array",
+            "items": {
+              "$ref": "#/$defs/citation"
+            }
+          }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "citation": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 64,
+      "description": "A clause as its framework cites it."
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "component": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "version": {
+          "type": "string"
+        },
+        "licenses": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "sbom": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "format",
+        "components",
+        "models",
+        "datasets",
+        "licenses"
+      ],
+      "properties": {
+        "format": {
+          "type": "string"
+        },
+        "components": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "models": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/component"
+          }
+        },
+        "datasets": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/component"
+          }
+        },
+        "licenses": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "signature": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "image",
+        "digest",
+        "verified",
+        "method"
+      ],
+      "properties": {
+        "image": {
+          "type": "string"
+        },
+        "digest": {
+          "type": "string",
+          "pattern": "^sha256:[0-9a-f]{64}$"
+        },
+        "verified": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "description": "null when the signature was not checked."
+        },
+        "method": {
+          "enum": [
+            "cosign-key",
+            "cosign-keyless",
+            "none"
+          ]
+        },
+        "detail": {
+          "type": "string"
+        }
+      }
+    },
+    "evaluation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "tool",
+        "name"
+      ],
+      "properties": {
+        "tool": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "version": {
+          "type": "string"
+        },
+        "dataset_sha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "date": {
+          "type": "string",
+          "format": "date"
+        },
+        "metrics": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "name",
+              "value"
+            ],
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "value": {
+                "type": "number"
+              },
+              "n": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "higher_is_better": {
+                "type": "boolean"
+              }
+            }
+          }
+        },
+        "tests": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "total",
+            "passed",
+            "failed",
+            "skipped"
+          ],
+          "properties": {
+            "total": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "passed": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "failed": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "skipped": {
+              "type": "integer",
+              "minimum": 0
+            }
+          }
+        },
+        "aitf": {
+          "type": "object",
+          "description": "Provenance of an AI Testing Framework run: the executed module, its template, the payload ids of its input and output artifacts and the image of each step.",
+          "required": [
+            "execution",
+            "module_sha256"
+          ],
+          "properties": {
+            "execution": {
+              "type": "string"
+            },
+            "module_sha256": {
+              "$ref": "#/$defs/sha256"
+            },
+            "template": {
+              "type": "string"
+            },
+            "template_sha256": {
+              "$ref": "#/$defs/sha256"
+            },
+            "state": {
+              "type": "integer"
+            },
+            "artifacts": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "name",
+                  "payload_id"
+                ],
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "payload_id": {
+                    "type": "string",
+                    "pattern": "^sha256:[0-9a-f]{64}$"
+                  },
+                  "output": {
+                    "type": "boolean"
+                  }
+                }
+              }
+            },
+            "steps": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "name",
+                  "image"
+                ],
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "image": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "modules": {
+              "type": "object",
+              "additionalProperties": {
+                "$ref": "#/$defs/sha256"
+              }
+            }
+          }
+        }
+      },
+      "anyOf": [
+        {
+          "required": [
+            "metrics"
+          ],
+          "properties": {
+            "metrics": {
+              "minItems": 1
+            }
+          }
+        },
+        {
+          "required": [
+            "tests"
+          ]
+        }
+      ]
+    },
+    "certificate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "issuer"
+      ],
+      "properties": {
+        "kind": {
+          "enum": [
+            "notified_body_certificate",
+            "declaration_of_conformity",
+            "ce_marking",
+            "eu_database_registration"
+          ]
+        },
+        "issuer": {
+          "type": "string"
+        },
+        "number": {
+          "type": "string"
+        },
+        "notified_body_id": {
+          "type": "string",
+          "pattern": "^[0-9]{4}$"
+        },
+        "regulation": {
+          "type": "string"
+        },
+        "valid_from": {
+          "type": "string",
+          "format": "date"
+        },
+        "valid_until": {
+          "type": "string",
+          "format": "date"
+        }
+      }
+    },
+    "framework_key": {
+      "type": "string",
+      "pattern": "^[a-z0-9_]+$",
+      "maxLength": 255
+    },
+    "ai_act_citation": {
+      "type": "string",
+      "pattern": "^(Art\\.[0-9]+[a-z]?(\\([0-9]+\\))?|Annex [IVX]+(\\([0-9]+\\))?(\\([a-z]\\))?)$"
+    },
+    "tag": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "framework",
+        "citation"
+      ],
+      "properties": {
+        "framework": {
+          "$ref": "#/$defs/framework_key"
+        },
+        "citation": {
+          "$ref": "#/$defs/citation"
+        }
+      },
+      "if": {
+        "properties": {
+          "framework": {
+            "const": "eu_ai_act"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "citation": {
+            "$ref": "#/$defs/ai_act_citation"
+          }
+        }
+      }
+    },
+    "classification": {
+      "description": "A second classification of the subject by an outside tool (AIoD TAI Scan), set against the collector's own tier. It changes no scope.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "tool",
+        "date",
+        "input",
+        "level",
+        "tier"
+      ],
+      "properties": {
+        "tool": {
+          "type": "string"
+        },
+        "service": {
+          "type": "string"
+        },
+        "date": {
+          "type": "string",
+          "format": "date"
+        },
+        "input": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "level": {
+          "type": "string",
+          "description": "The tool's own words."
+        },
+        "tier": {
+          "enum": [
+            "prohibited",
+            "high_risk",
+            "limited",
+            "minimal",
+            "out_of_scope",
+            "unrecognised"
+          ]
+        },
+        "articles": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[0-9]{1,3}[a-z]?$"
+          }
+        },
+        "annexes": {
+          "type": "string"
+        },
+        "recitals": {
+          "type": "string"
+        },
+        "obligations": {
+          "type": "string"
+        },
+        "engine_tier": {
+          "enum": [
+            "prohibited",
+            "high_risk",
+            "limited",
+            "minimal",
+            "out_of_scope"
+          ]
+        },
+        "agrees": {
+          "type": "boolean"
+        }
+      }
+    }
+  }
+}

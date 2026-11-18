@@ -1,0 +1,247 @@
+{
+  "schema_version": "0.3",
+  "record_id": "3a7fd0f9-5951-4a72-8392-fe6adc953641",
+  "created_at": "2026-11-17T04:54:50+00:00",
+  "collector": {
+    "name": "compliance-artifact-collector",
+    "version": "0.3.0"
+  },
+  "subject": {
+    "name": "NodeSight",
+    "version": "2.3.0",
+    "provider": "Example Imaging Ltd (fictional)",
+    "intended_purpose": "Segments lung nodules on chest CT and reports a malignancy likelihood to the radiologist."
+  },
+  "scopes": [
+    {
+      "framework": {
+        "key": "eu_ai_act",
+        "version": "2026.1"
+      },
+      "method": "facts_supplied",
+      "answers": {
+        "ai_act_category": "High-risk: product under Union harmonisation legislation (e.g. MDR class IIa or higher)",
+        "annex_iii_biometrics": "No",
+        "bias_special_category_data": "Yes",
+        "remote_biometric_identification": "No",
+        "interacts_with_persons": "No",
+        "generates_synthetic_content": "No",
+        "annex_iii_critical_infrastructure": "No"
+      },
+      "facts": {
+        "ai_system": true,
+        "prohibited_practice": false,
+        "mdr_class": "IIb",
+        "annex_iii_area": "none",
+        "art6_3_exception": false,
+        "profiling": false,
+        "special_category_data": true,
+        "remote_biometric_id": false,
+        "interacts_with_persons": false,
+        "synthetic_content": false,
+        "emotion_or_biometric_categorisation": false
+      },
+      "tier": "high_risk_6_1",
+      "clauses": [
+        "Art.10(2)",
+        "Art.10(3)",
+        "Art.10(4)",
+        "Art.11(1)",
+        "Art.11(2)",
+        "Art.12(1)",
+        "Art.12(2)",
+        "Art.13(1)",
+        "Art.13(2)",
+        "Art.13(3)",
+        "Art.14(1)",
+        "Art.14(2)",
+        "Art.14(3)",
+        "Art.14(4)",
+        "Art.15(1)",
+        "Art.15(3)",
+        "Art.15(4)",
+        "Art.15(5)",
+        "Art.16",
+        "Art.17(1)",
+        "Art.18(1)",
+        "Art.19(1)",
+        "Art.20(1)",
+        "Art.43(3)",
+        "Art.47(1)",
+        "Art.48",
+        "Art.4a(1)",
+        "Art.5(1)",
+        "Art.6(1)",
+        "Art.72(1)",
+        "Art.73(1)",
+        "Art.9(1)",
+        "Art.9(2)",
+        "Art.9(5)",
+        "Art.9(6)"
+      ]
+    }
+  ],
+  "artefacts": [
+    {
+      "id": "sbom-1",
+      "type": "sbom",
+      "title": "SBOM (5 components, 1 models, 1 datasets)",
+      "supports": [
+        {
+          "framework": "eu_ai_act",
+          "citation": "Art.10(2)"
+        },
+        {
+          "framework": "eu_ai_act",
+          "citation": "Art.11(1)"
+        },
+        {
+          "framework": "eu_ai_act",
+          "citation": "Art.15(5)"
+        }
+      ],
+      "source": {
+        "path": "sbom.cdx.json",
+        "sha256": "08aa15a6fb66471cdcb87b6dcd5e57462cd75b5bc1caa59dbc145175ee778c30"
+      },
+      "data": {
+        "format": "CycloneDX 1.6",
+        "components": 5,
+        "models": [
+          {
+            "name": "nodesight-unet",
+            "version": "2.3.0",
+            "licenses": [
+              "Proprietary"
+            ]
+          }
+        ],
+        "datasets": [
+          {
+            "name": "nodesight-training-ct",
+            "version": "2025-09",
+            "licenses": [
+              "Proprietary"
+            ]
+          }
+        ],
+        "licenses": [
+          "BSD-3-Clause",
+          "MIT",
+          "Proprietary"
+        ]
+      }
+    },
+    {
+      "id": "signature-1",
+      "type": "signature",
+      "title": "Image signature not checked",
+      "supports": [
+        {
+          "framework": "eu_ai_act",
+          "citation": "Art.15(5)"
+        },
+        {
+          "framework": "eu_ai_act",
+          "citation": "Art.17(1)"
+        }
+      ],
+      "data": {
+        "image": "registry.example.com/nodesight",
+        "digest": "sha256:9f2c4a1e5b7d8c3f6a0e1d2b4c5a6f7e8d9c0b1a2f3e4d5c6b7a8f9e0d1c2b3a",
+        "verified": null,
+        "method": "none",
+        "detail": "no cosign key or identity configured"
+      }
+    },
+    {
+      "id": "evaluation-1",
+      "type": "evaluation",
+      "title": "AI Testing Framework: Nodule detection, held-out test set",
+      "supports": [
+        {
+          "framework": "eu_ai_act",
+          "citation": "Annex IV(2)(g)"
+        },
+        {
+          "framework": "eu_ai_act",
+          "citation": "Art.15(1)"
+        },
+        {
+          "framework": "eu_ai_act",
+          "citation": "Art.15(3)"
+        },
+        {
+          "framework": "eu_ai_act",
+          "citation": "Art.4a(1)"
+        }
+      ],
+      "data": {
+        "tool": "AI Testing Framework",
+        "name": "Nodule detection, held-out test set",
+        "version": "2026-11",
+        "date": "2026-11-10",
+        "metrics": [
+          {
+            "name": "sensitivity",
+            "value": 0.94,
+            "n": 1200,
+            "higher_is_better": true
+          },
+          {
+            "name": "specificity",
+            "value": 0.89,
+            "n": 1200,
+            "higher_is_better": true
+          },
+          {
+            "name": "sensitivity_gap_by_sex",
+            "value": 0.02,
+            "n": 1200,
+            "higher_is_better": false
+          }
+        ]
+      }
+    },
+    {
+      "id": "certificate-1",
+      "type": "certificate",
+      "title": "Notified body certificate (Example Notified Body (fictional))",
+      "supports": [
+        {
+          "framework": "eu_ai_act",
+          "citation": "Art.43(3)"
+        }
+      ],
+      "source": {
+        "path": "certificate.pdf",
+        "sha256": "12dfb3e2a9a93e19dba3901ce3f11f745042c15bafa10a22d16daa6268a6a5b9"
+      },
+      "data": {
+        "kind": "notified_body_certificate",
+        "issuer": "Example Notified Body (fictional)",
+        "number": "EX-MDR-0042",
+        "regulation": "MDR (EU) 2017/745 Annex IX",
+        "valid_from": "2025-03-01",
+        "valid_until": "2030-02-28"
+      }
+    },
+    {
+      "id": "certificate-2",
+      "type": "certificate",
+      "title": "Declaration of conformity (Example Imaging Ltd (fictional))",
+      "supports": [
+        {
+          "framework": "eu_ai_act",
+          "citation": "Art.47(1)"
+        }
+      ],
+      "data": {
+        "kind": "declaration_of_conformity",
+        "issuer": "Example Imaging Ltd (fictional)",
+        "number": "DoC-NS-2.3",
+        "valid_from": "2026-01-15"
+      }
+    }
+  ]
+}

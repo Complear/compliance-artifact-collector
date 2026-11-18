@@ -1,0 +1,78 @@
+{
+  "subject": {
+    "name": "Claude Code",
+    "version": "2.1.0",
+    "provider": "Anthropic",
+    "intended_purpose": "AI coding tool validated as QMS and development software (ISO 13485:2016 4.1.6)"
+  },
+  "frameworks": [],
+  "scopes": [
+    {
+      "framework": {
+        "key": "ai_coding_tool_validation",
+        "version": "2026.1"
+      },
+      "answers": {
+        "validation_profile": "Lite"
+      },
+      "clauses": [
+        "IQ-03",
+        "OQ-01",
+        "OQ-02",
+        "OQ-03",
+        "OQ-04",
+        "OQ-05",
+        "OQ-06",
+        "OQ-07",
+        "OQ-08",
+        "OQ-09",
+        "OQ-10",
+        "MA-01",
+        "PQ-01",
+        "PQ-02"
+      ]
+    }
+  ],
+  "evaluations": [
+    {
+      "tool": "AI Coding Tool Validation Kit",
+      "name": "IQ-03 baseline",
+      "result": "pass",
+      "file": "evidence/CLAUDE/IQ-03/baseline.json",
+      "supports": [
+        "ai_coding_tool_validation:IQ-03"
+      ],
+      "date": "2026-11-16"
+    },
+    {
+      "tool": "AI Coding Tool Validation Kit",
+      "name": "MA-01 admission",
+      "result": "fail",
+      "file": "evidence/CLAUDE/MA-01/admission.json",
+      "supports": [
+        "ai_coding_tool_validation:MA-01"
+      ],
+      "date": "2026-11-16"
+    },
+    {
+      "tool": "AI Coding Tool Validation Kit",
+      "name": "OQ-01 gates",
+      "result": "pass",
+      "file": "evidence/CLAUDE/OQ-01/gates.json",
+      "supports": [
+        "ai_coding_tool_validation:OQ-01"
+      ],
+      "date": "2026-11-16"
+    },
+    {
+      "tool": "AI Coding Tool Validation Kit",
+      "name": "OQ-02 canary",
+      "result": "inconclusive",
+      "file": "evidence/GEN/OQ-02/canary.json",
+      "supports": [
+        "ai_coding_tool_validation:OQ-02"
+      ],
+      "date": "2026-11-16"
+    }
+  ]
+}

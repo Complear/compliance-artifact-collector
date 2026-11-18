@@ -1,0 +1,256 @@
+{
+  "context": {
+    "reader": {
+      "name": "Reader (model under test)",
+      "description": "Language model behind an OpenAI-compatible endpoint that extracts the facts.",
+      "parameters": {
+        "model": "ministral-3-3b",
+        "endpoint": "http://127.0.0.1:8080/v1",
+        "temperature": 0,
+        "max_tokens": 300,
+        "mode": "llm",
+        "bundled": false,
+        "malformed_outputs": 0
+      }
+    },
+    "pack": {
+      "name": "EU AI Act framework pack",
+      "description": "EU AI Act (EU) 2024/1689: its scoping rules decide which clauses apply.",
+      "parameters": {
+        "key": "eu_ai_act",
+        "version": "2024.1",
+        "sha256": "4bfcc62ba70adf55634e07c92b91ef5f53e207e04ba8603626db967d1bf783a1",
+        "name": "EU AI Act (EU) 2024/1689",
+        "clauses": 47
+      }
+    },
+    "benchmark": {
+      "name": "Compliance Draft Benchmark",
+      "description": "Synthetic product descriptions with gold facts; expected tier and clauses derived by the rule engine.",
+      "parameters": {
+        "version": "0.1.0",
+        "commit": "fdbcfa108033d84d2135b307c3969a901488baf3",
+        "split": "test",
+        "n": 79,
+        "dataset_sha256": "3d48d164f32ce8230d5ebeff3fa8fec14e49b639e5b80057ece776ef26da4413",
+        "reader_temperature": 0
+      }
+    }
+  },
+  "evaluations": [
+    {
+      "name": "Clause metrics",
+      "description": "Predicted clauses (rule engine on the read facts) against the expected clauses, mean over cases",
+      "metrics": {
+        "clause_coverage": {
+          "value": 0.9203,
+          "description": "Share of expected clauses that were predicted (recall)"
+        },
+        "clause_precision": {
+          "value": 0.9111,
+          "description": "Share of predicted clauses that were expected"
+        },
+        "n": {
+          "value": 79,
+          "description": "Cases"
+        }
+      }
+    },
+    {
+      "name": "Tier metrics",
+      "description": "Predicted EU AI Act risk tier against the expected tier",
+      "metrics": {
+        "tier_accuracy": {
+          "value": 0.8861,
+          "description": "Share of cases with the expected tier"
+        },
+        "under_classification_rate": {
+          "value": 0.0253,
+          "description": "Share of cases whose predicted tier is less severe than expected"
+        }
+      }
+    },
+    {
+      "name": "Fact accuracy",
+      "description": "Share of cases where the reader's fact equals the gold fact",
+      "metrics": {
+        "ai_system": {
+          "value": 0.9873,
+          "description": "Accuracy of the fact ai_system"
+        },
+        "prohibited_practice": {
+          "value": 0.9747,
+          "description": "Accuracy of the fact prohibited_practice"
+        },
+        "mdr_class": {
+          "value": 0.9241,
+          "description": "Accuracy of the fact mdr_class"
+        },
+        "annex_iii_area": {
+          "value": 0.7722,
+          "description": "Accuracy of the fact annex_iii_area"
+        },
+        "art6_3_exception": {
+          "value": 0.6076,
+          "description": "Accuracy of the fact art6_3_exception"
+        },
+        "profiling": {
+          "value": 0.8608,
+          "description": "Accuracy of the fact profiling"
+        },
+        "special_category_data": {
+          "value": 0.9367,
+          "description": "Accuracy of the fact special_category_data"
+        },
+        "remote_biometric_id": {
+          "value": 0.9873,
+          "description": "Accuracy of the fact remote_biometric_id"
+        },
+        "interacts_with_persons": {
+          "value": 0.7848,
+          "description": "Accuracy of the fact interacts_with_persons"
+        },
+        "synthetic_content": {
+          "value": 0.8608,
+          "description": "Accuracy of the fact synthetic_content"
+        },
+        "emotion_or_biometric_categorisation": {
+          "value": 0.962,
+          "description": "Accuracy of the fact emotion_or_biometric_categorisation"
+        }
+      }
+    },
+    {
+      "name": "Expected tier: high_risk_6_1",
+      "description": "Cases whose expected tier is high_risk_6_1",
+      "metrics": {
+        "n": {
+          "value": 16,
+          "description": "Cases"
+        },
+        "clause_coverage": {
+          "value": 0.9358,
+          "description": "Mean share of expected clauses predicted"
+        },
+        "clause_precision": {
+          "value": 0.9582,
+          "description": "Mean share of predicted clauses expected"
+        },
+        "under_classification_rate": {
+          "value": 0.0625,
+          "description": "Share predicted less severe than expected"
+        }
+      }
+    },
+    {
+      "name": "Expected tier: high_risk_6_2",
+      "description": "Cases whose expected tier is high_risk_6_2",
+      "metrics": {
+        "n": {
+          "value": 12,
+          "description": "Cases"
+        },
+        "clause_coverage": {
+          "value": 0.8357,
+          "description": "Mean share of expected clauses predicted"
+        },
+        "clause_precision": {
+          "value": 0.9859,
+          "description": "Mean share of predicted clauses expected"
+        },
+        "under_classification_rate": {
+          "value": 0.0,
+          "description": "Share predicted less severe than expected"
+        }
+      }
+    },
+    {
+      "name": "Expected tier: limited",
+      "description": "Cases whose expected tier is limited",
+      "metrics": {
+        "n": {
+          "value": 16,
+          "description": "Cases"
+        },
+        "clause_coverage": {
+          "value": 0.8875,
+          "description": "Mean share of expected clauses predicted"
+        },
+        "clause_precision": {
+          "value": 0.7417,
+          "description": "Mean share of predicted clauses expected"
+        },
+        "under_classification_rate": {
+          "value": 0.0625,
+          "description": "Share predicted less severe than expected"
+        }
+      }
+    },
+    {
+      "name": "Expected tier: minimal",
+      "description": "Cases whose expected tier is minimal",
+      "metrics": {
+        "n": {
+          "value": 19,
+          "description": "Cases"
+        },
+        "clause_coverage": {
+          "value": 0.9211,
+          "description": "Mean share of expected clauses predicted"
+        },
+        "clause_precision": {
+          "value": 0.8921,
+          "description": "Mean share of predicted clauses expected"
+        },
+        "under_classification_rate": {
+          "value": 0.0,
+          "description": "Share predicted less severe than expected"
+        }
+      }
+    },
+    {
+      "name": "Expected tier: out_of_scope",
+      "description": "Cases whose expected tier is out_of_scope",
+      "metrics": {
+        "n": {
+          "value": 10,
+          "description": "Cases"
+        },
+        "clause_coverage": {
+          "value": 1.0,
+          "description": "Mean share of expected clauses predicted"
+        },
+        "clause_precision": {
+          "value": 1.0,
+          "description": "Mean share of predicted clauses expected"
+        },
+        "under_classification_rate": {
+          "value": 0.0,
+          "description": "Share predicted less severe than expected"
+        }
+      }
+    },
+    {
+      "name": "Expected tier: prohibited",
+      "description": "Cases whose expected tier is prohibited",
+      "metrics": {
+        "n": {
+          "value": 6,
+          "description": "Cases"
+        },
+        "clause_coverage": {
+          "value": 1.0,
+          "description": "Mean share of expected clauses predicted"
+        },
+        "clause_precision": {
+          "value": 1.0,
+          "description": "Mean share of predicted clauses expected"
+        },
+        "under_classification_rate": {
+          "value": 0.0,
+          "description": "Share predicted less severe than expected"
+        }
+      }
+    }
+  ]
+}
