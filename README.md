@@ -45,7 +45,7 @@ attached as a signed attestation. Check it before you use it:
 
 ```sh
 cosign verify ghcr.io/complear/compliance-artifact-collector:0.3.0 \
-  --certificate-identity-regexp 'https://github.com/Complear/compliance-artifact-collector/.github/workflows/release-image.yml@.*' \
+  --certificate-identity-regexp 'https://github.com/Complear/compliance-artifact-collector/.github/workflows/release-image.yml@refs/tags/v.*' \
   --certificate-oidc-issuer https://token.actions.githubusercontent.com
 ```
 
