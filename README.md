@@ -49,7 +49,7 @@ make image          # builds compliance-artifact-collector:0.3.0
 # the two clones side by side, as above
 cd compliance-artifact-collector
 make setup          # creates .venv with jsonschema and the benchmark engine
-make test           # 11 tests, should print OK
+make test           # runs the test suite, should print OK
 ```
 
 Optional tools, used only if you ask for them:
@@ -270,6 +270,8 @@ resolve; TAI Scan never changes the scope.
 ```sh
 TAI_USER=... TAI_PASS=... python -m cac collect product.json --out out/record.json
 ```
+
+`examples/nodesight/product-taiscan.json` is the NodeSight example with this block filled in.
 
 `TAI_USER` and `TAI_PASS` are your AIoD account (the one you sign in with on the AIoD
 marketplace); they go only to `aiodp-auth.aiodp.ai`. If that login is refused ("Invalid user
