@@ -201,6 +201,9 @@ Then say how it was signed:
 | a key pair (`cosign sign --key cosign.key …`) | `{"key": "cosign.pub"}` |
 | keyless, from CI (e.g. GitHub Actions) | `{"identity": "https://github.com/ORG/REPO/.github/workflows/release.yml@refs/heads/main", "issuer": "https://token.actions.githubusercontent.com"}` |
 
+For example, the Collector's own image is signed by
+`https://github.com/Complear/compliance-artifact-collector/.github/workflows/release-image.yml@refs/tags/v0.3.0`.
+
 The record says `verified: true`, `false` (the check failed; the Collector warns) or `null` (not
 checked: no cosign, or no key/identity given). Checking needs network access to your registry.
 
@@ -440,8 +443,10 @@ runs as a non-root user with a read-only root filesystem.
 - The default clause tags are Complear's reading of the AI Act; change any artefact's `supports`
   in `product.json` if your assessment differs.
 - Not scoped: MDR class I devices that need a notified body, IVDR devices, general-purpose AI models.
-- Image signature checking is tested against a stub; record signing and verification are tested
-  with cosign 2.4.1.
+- Image signature checking is tested against a stub, and was checked end to end against the
+  Collector's own release image on ghcr.io (keyless, 0.3.0): `verified: true` for the release
+  workflow's identity, `false` for any other. Record signing and verification are tested with
+  cosign 2.4.1.
 
 ## Terms of use
 
