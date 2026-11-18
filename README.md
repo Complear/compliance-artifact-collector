@@ -233,29 +233,9 @@ anything else, such as `"inconclusive"`, which is recorded as skipped) and the r
 one-test count. Add `"file"` (relative to `product.json`) to fingerprint the check's own evidence file.
 
 ```json
-{"tool": "AI Coding Tool Validation Kit", "name": "OQ-01 gates", "date": "2026-11-16",
- "result": "pass", "file": "evidence/CLAUDE/OQ-01/gates.json",
- "supports": ["ai_coding_tool_validation:OQ-01"]}
+{"tool": "Release checklist", "name": "Penetration test sign-off", "date": "2026-11-16",
+ "result": "pass", "file": "evidence/pentest-signoff.json", "supports": ["Art.15(5)"]}
 ```
-
-### Evidence from the AI Coding Tool Validation Kit
-
-The [AI Coding Tool Validation Kit](https://github.com/bernardopersonal/ai-coding-tool-validation-kit)
-validates AI coding assistants (Claude Code, Codex) under ISO 13485:2016 4.1.6. Its scripts write
-JSON evidence under `evidence/<TOOL>/<TEST-ID>/`. `examples/ai-tool-validation/kit_product.py`
-turns those folders into a `product.json`, one evaluation per evidence file, tagged with its test id
-in Complear's `ai_coding_tool_validation` framework:
-
-```sh
-python3 examples/ai-tool-validation/kit_product.py evidence/CLAUDE evidence/GEN \
-  --name "Claude Code" --version 2.1.0 --provider Anthropic --profile lite --out product.json
-.venv/bin/python -m cac collect product.json --out record.json
-.venv/bin/python -m cac push record.json
-```
-
-Use a Complear upload key on the branch where the `ai_coding_tool_validation` framework is applied;
-a test id that is not applied there comes back as `unmatched`. `examples/ai-tool-validation/` holds
-fictional evidence and the record it produces.
 
 ## 8. Certificates
 

@@ -1,5 +1,4 @@
 import copy
-import importlib.util
 import io
 import json
 import shutil
@@ -18,14 +17,6 @@ from cac.__main__ import main
 ROOT = Path(__file__).resolve().parent.parent
 EXAMPLE = ROOT / "examples" / "nodesight"
 CONFIG = json.loads((EXAMPLE / "product.json").read_text())
-KIT = ROOT / "examples" / "ai-tool-validation"
-
-
-def kit_product():
-    spec = importlib.util.spec_from_file_location("kit_product", KIT / "kit_product.py")
-    module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module)
-    return module
 
 
 def AI(citation):
@@ -315,40 +306,33 @@ class CollectorTest(unittest.TestCase):
                 c.classification_artefact(item, [])
 
     def test_committed_example_record_is_valid(self):
-        for example in (EXAMPLE, KIT):
-            jsonschema.validate(json.loads((example / "record.json").read_text()), c.SCHEMA,
-                                format_checker=jsonschema.FormatChecker())
+        jsonschema.validate(json.loads((EXAMPLE / "record.json").read_text()), c.SCHEMA,
+                            format_checker=jsonschema.FormatChecker())
 
     def test_inline_evaluation_carries_its_file_and_result(self):
         with tempfile.TemporaryDirectory() as d:
             (Path(d) / "check.json").write_text('{"result": "fail"}')
-            art = c.evaluation_artefact({"tool": "Kit", "name": "OQ-02", "result": "fail", "file": "check.json",
-                                         "supports": ["kit:OQ-02"]}, Path(d))
-            unsure = c.evaluation_artefact({"tool": "Kit", "name": "OQ-03", "result": "inconclusive"}, Path(d))
+            art = c.evaluation_artefact({"tool": "Checklist", "name": "Pen test", "result": "fail", "file": "check.json",
+                                         "supports": ["iso42001:9.1"]}, Path(d))
+            unsure = c.evaluation_artefact({"tool": "Checklist", "name": "Scan", "result": "inconclusive"}, Path(d))
         self.assertEqual(art["source"], {"path": "check.json", "sha256": c.hashlib.sha256(b'{"result": "fail"}').hexdigest()})
         self.assertEqual(art["data"]["tests"], {"total": 1, "passed": 0, "failed": 1, "skipped": 0})
-        self.assertEqual(art["title"], "Kit: OQ-02: 0 of 1 tests passed")
+        self.assertEqual(art["title"], "Checklist: Pen test: 0 of 1 tests passed")
         self.assertEqual(unsure["data"]["tests"]["skipped"], 1)
         self.assertNotIn("source", unsure)
-
-    def test_kit_evidence_becomes_a_record(self):
-        config = kit_product().product([KIT / "evidence" / "CLAUDE", KIT / "evidence" / "GEN"], KIT,
-                                       "Claude Code", "2.1.0", "Anthropic", "lite")
-        record, warnings = c.collect(config, base=KIT)
-        self.assertEqual(warnings, [])
-        [scope] = record["scopes"]
-        self.assertEqual((scope["framework"]["key"], scope["answers"]), ("ai_coding_tool_validation", {"validation_profile": "Lite"}))
-        # One evaluation per evidence JSON with a result; the Markdown twin is not one.
-        self.assertEqual([(a["supports"][0]["citation"], a["data"]["tests"]["passed"]) for a in record["artefacts"]],
-                         [("IQ-03", 1), ("MA-01", 0), ("OQ-01", 1), ("OQ-02", 0)])
-        self.assertEqual(record["artefacts"][3]["source"]["path"], "evidence/GEN/OQ-02/canary.json")
 
     def test_collect_without_the_ai_act_needs_no_benchmark(self):
         # A fresh interpreter in which importing the benchmark (cdb) fails.
         with tempfile.TemporaryDirectory() as d:
+            (Path(d) / "check.json").write_text('{"result": "pass"}')
+            (Path(d) / "product.json").write_text(json.dumps({
+                "subject": {"name": "S", "version": "1", "provider": "P"}, "frameworks": [],
+                "scopes": [{"framework": {"key": "iso42001", "version": "2023"}, "clauses": ["9.1"]}],
+                "evaluations": [{"tool": "T", "name": "N", "result": "pass", "file": "check.json",
+                                 "supports": ["iso42001:9.1"]}]}))
             run = subprocess.run(
                 [sys.executable, "-c", "import sys; sys.modules['cdb'] = None; from cac.__main__ import main; "
-                 f"sys.exit(main(['collect', {str(KIT / 'product.json')!r}, '--out', {str(Path(d) / 'r.json')!r}]))"],
+                 f"sys.exit(main(['collect', {str(Path(d) / 'product.json')!r}, '--out', {str(Path(d) / 'r.json')!r}]))"],
                 cwd=ROOT, capture_output=True, text=True)
         self.assertEqual(run.returncode, 0, run.stderr)
 
