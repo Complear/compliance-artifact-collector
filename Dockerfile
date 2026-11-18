@@ -1,5 +1,5 @@
 # Compliance Artifact Collector. Build with the benchmark checkout as a named context:
-#   docker build --build-context benchmark=../aiod-compliance-benchmark -t compliance-artifact-collector:0.3.0 .
+#   docker build --build-context benchmark=../aiod-compliance-benchmark -t compliance-artifact-collector:0.3.1 .
 FROM ghcr.io/sigstore/cosign/cosign:v2.4.1 AS cosign
 
 FROM python:3.12-slim

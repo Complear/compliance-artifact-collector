@@ -612,7 +612,7 @@
     },
     "ai_act_citation": {
       "type": "string",
-      "pattern": "^(Art\\.[0-9]+[a-z]?(\\([0-9]+\\))?|Annex [IVX]+(\\([0-9]+\\))?(\\([a-z]\\))?)$"
+      "pattern": "^(Art\\.[0-9]+[a-z]?(\\([0-9]+[a-z]?\\))?|Annex [IVX]+(\\([0-9]+\\))?(\\([a-z]\\))?)$"
     },
     "tag": {
       "type": "object",
