@@ -1,0 +1,41 @@
+# Compliance Artifact Collector job template for GitLab CI.
+#
+#   include:
+#     - remote: https://raw.githubusercontent.com/Complear/compliance-artifact-collector/main/ci/gitlab/compliance-artifact-collector.gitlab-ci.yml
+#   conformity-record:
+#     extends: .compliance-artifact-collector
+#     variables:
+#       CAC_PRODUCT: compliance/product.json
+#
+# Optional CI/CD variables (mark keys and passwords masked):
+#   CAC_SIGN_KEY (a File variable holding a cosign private key), COSIGN_PASSWORD,
+#   CAC_PUSH=true with COMPLEAR_URL and COMPLEAR_UPLOAD_KEY, TAI_TOKEN.
+
+.compliance-artifact-collector:
+  image:
+    name: ghcr.io/complear/compliance-artifact-collector:0.3.0
+    entrypoint: [""]
+  variables:
+    CAC_PRODUCT: product.json
+    CAC_OUT: compliance/record.json
+    CAC_VALIDATE: "true"
+    CAC_PUSH: "false"
+    CAC_TRANSPARENCY_LOG: "false"
+  script:
+    - export PYTHONPATH=/app HOME=/tmp
+    - mkdir -p "$(dirname "$CAC_OUT")"
+    - |
+      sign=""
+      if [ -n "${CAC_SIGN_KEY:-}" ]; then
+        sign="--sign-key $CAC_SIGN_KEY"
+        [ "$CAC_TRANSPARENCY_LOG" = "true" ] && sign="$sign --transparency-log"
+      fi
+      python -m cac collect "$CAC_PRODUCT" --out "$CAC_OUT" $sign
+    - if [ "$CAC_VALIDATE" = "true" ]; then python -m cac validate "$CAC_OUT"; fi
+    - if [ "$CAC_PUSH" = "true" ]; then python -m cac push "$CAC_OUT"; fi
+  artifacts:
+    name: conformity-record
+    paths:
+      - $CAC_OUT
+      - $CAC_OUT.bundle
+    expire_in: 1 year

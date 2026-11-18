@@ -1,0 +1,4 @@
+input:
+  files:
+    product.json: |
+      {"subject": {"name": "Example"}}

@@ -3,6 +3,9 @@
 FROM ghcr.io/sigstore/cosign/cosign:v2.4.1 AS cosign
 
 FROM python:3.12-slim
+LABEL org.opencontainers.image.source="https://github.com/Complear/compliance-artifact-collector" \
+      org.opencontainers.image.description="Compliance Artifact Collector: one conformity record from an AI system's compliance evidence" \
+      org.opencontainers.image.licenses="Apache-2.0"
 COPY --from=cosign /ko-app/cosign /usr/local/bin/cosign
 COPY --from=benchmark pyproject.toml /src/cdb/pyproject.toml
 COPY --from=benchmark cdb /src/cdb/cdb

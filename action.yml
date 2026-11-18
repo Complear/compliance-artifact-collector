@@ -1,0 +1,84 @@
+name: Compliance Artifact Collector
+description: Gather an AI system's SBOM, image signature, test results and certificates into one conformity record.
+author: Complear
+branding:
+  icon: check-square
+  color: blue
+
+inputs:
+  product:
+    description: Path to product.json, relative to the repository root.
+    required: true
+  out:
+    description: Where to write the record, relative to the repository root.
+    default: compliance/record.json
+  validate:
+    description: Check the record against the schema.
+    default: "true"
+  sign-key:
+    description: A cosign private key (PEM content, e.g. from a secret). Signs the record and writes <out>.bundle.
+    default: ""
+  cosign-password:
+    description: The password of sign-key, if it has one.
+    default: ""
+  transparency-log:
+    description: Also record the record's signature in the public Sigstore log.
+    default: "false"
+  push:
+    description: Send the record to Complear OS (needs complear-url and complear-upload-key).
+    default: "false"
+  complear-url:
+    description: Your Complear workspace URL.
+    default: ""
+  complear-upload-key:
+    description: A Complear API key with the purpose "Conformity record upload".
+    default: ""
+  tai-token:
+    description: Optional AIoD TAI Scan token, used when product.json has a tai_scan block.
+    default: ""
+  image:
+    description: The Collector image.
+    default: ghcr.io/complear/compliance-artifact-collector
+  version:
+    description: The Collector image tag.
+    default: "0.3.0"
+
+outputs:
+  record:
+    description: Path of the written record.
+    value: ${{ steps.collect.outputs.record }}
+
+runs:
+  using: composite
+  steps:
+    - id: collect
+      shell: bash
+      env:
+        CAC_IMAGE: ${{ inputs.image }}:${{ inputs.version }}
+        CAC_PRODUCT: ${{ inputs.product }}
+        CAC_OUT: ${{ inputs.out }}
+        CAC_VALIDATE: ${{ inputs.validate }}
+        CAC_SIGN_KEY: ${{ inputs.sign-key }}
+        CAC_TLOG: ${{ inputs.transparency-log }}
+        CAC_PUSH: ${{ inputs.push }}
+        COSIGN_PASSWORD: ${{ inputs.cosign-password }}
+        COMPLEAR_URL: ${{ inputs.complear-url }}
+        COMPLEAR_UPLOAD_KEY: ${{ inputs.complear-upload-key }}
+        TAI_TOKEN: ${{ inputs.tai-token }}
+      run: |
+        set -euo pipefail
+        mkdir -p "$(dirname "$CAC_OUT")"
+        run=(docker run --rm --user "$(id -u):$(id -g)" -e HOME=/tmp
+             -e COSIGN_PASSWORD -e COMPLEAR_URL -e COMPLEAR_UPLOAD_KEY -e TAI_TOKEN
+             -v "$GITHUB_WORKSPACE:/work" -w /work)
+        sign=()
+        if [ -n "$CAC_SIGN_KEY" ]; then
+          keys="$RUNNER_TEMP/cac-keys"; mkdir -p "$keys"; printf '%s\n' "$CAC_SIGN_KEY" > "$keys/cosign.key"
+          run+=(-v "$keys:/keys:ro"); sign=(--sign-key /keys/cosign.key)
+          if [ "$CAC_TLOG" = "true" ]; then sign+=(--transparency-log); fi
+        fi
+        "${run[@]}" "$CAC_IMAGE" collect "$CAC_PRODUCT" --out "$CAC_OUT" "${sign[@]}"
+        if [ -n "$CAC_SIGN_KEY" ]; then rm -rf "$keys"; fi
+        if [ "$CAC_VALIDATE" = "true" ]; then "${run[@]}" "$CAC_IMAGE" validate "$CAC_OUT"; fi
+        if [ "$CAC_PUSH" = "true" ]; then "${run[@]}" "$CAC_IMAGE" push "$CAC_OUT"; fi
+        echo "record=$CAC_OUT" >> "$GITHUB_OUTPUT"

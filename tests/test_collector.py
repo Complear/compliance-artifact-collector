@@ -336,5 +336,19 @@ class CollectorTest(unittest.TestCase):
                 cwd=ROOT, capture_output=True, text=True)
         self.assertEqual(run.returncode, 0, run.stderr)
 
+
+class ReleaseVersionTest(unittest.TestCase):
+    """The Helm chart, the GitHub Action and the GitLab template run the image of this version."""
+
+    def test_packaging_names_the_package_version(self):
+        from cac import __version__
+        chart = (ROOT / "charts" / "compliance-artifact-collector" / "Chart.yaml").read_text()
+        self.assertIn(f'appVersion: "{__version__}"', chart)
+        self.assertIn(f'default: "{__version__}"', (ROOT / "action.yml").read_text())
+        gitlab = (ROOT / "ci" / "gitlab" / "compliance-artifact-collector.gitlab-ci.yml").read_text()
+        self.assertIn(f"compliance-artifact-collector:{__version__}", gitlab)
+        self.assertIn(f"compliance-artifact-collector:{__version__}", (ROOT / "Makefile").read_text())
+
+
 if __name__ == "__main__":
     unittest.main()
