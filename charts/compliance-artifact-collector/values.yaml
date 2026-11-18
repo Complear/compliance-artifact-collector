@@ -1,0 +1,93 @@
+image:
+  repository: ghcr.io/complear/compliance-artifact-collector
+  # Defaults to the chart's appVersion.
+  tag: ""
+  # Pin a digest (sha256:...) to run exactly the signed image; it overrides the tag.
+  digest: ""
+  pullPolicy: IfNotPresent
+
+imagePullSecrets: []
+
+# The input folder, mounted read-only at /work/in. product.json and the files it names
+# (SBOM, test reports, certificates) are read relative to it.
+input:
+  # Files written into a ConfigMap: file name -> content.
+  files: {}
+  #   product.json: |
+  #     {"subject": {...}, "facts": {...}}
+  # Binary files (PDF certificates), base64-encoded: file name -> base64 content.
+  binaryFiles: {}
+  # Or an existing ConfigMap holding the files.
+  existingConfigMap: ""
+  # Or an existing PersistentVolumeClaim (takes precedence over the ConfigMap).
+  existingClaim: ""
+  subPath: ""
+  # The product file inside the input folder.
+  productFile: product.json
+
+# The output folder, /work/out. record.json (and record.json.bundle when signed) land here.
+output:
+  file: record.json
+  persistence:
+    # false: an emptyDir, so the record lives only as long as the pod (read it from the logs or push it).
+    enabled: false
+    existingClaim: ""
+    size: 100Mi
+    storageClassName: ""
+    accessModes: [ReadWriteOnce]
+
+# Sign the record with a cosign key pair. The Secret holds cosign.key and, if the key has one,
+# COSIGN_PASSWORD.
+signing:
+  enabled: false
+  existingSecret: ""
+  transparencyLog: false
+
+# Check the record against the schema after collecting.
+validate: true
+
+# Send the record to Complear OS. The Secret named in envFromSecret must hold COMPLEAR_URL and
+# COMPLEAR_UPLOAD_KEY.
+push:
+  enabled: false
+
+# A Secret whose keys become environment variables, e.g. TAI_USER/TAI_PASS (or TAI_TOKEN) for
+# TAI Scan, COMPLEAR_URL/COMPLEAR_UPLOAD_KEY for push, READER_URL/READER_API_KEY for the reader.
+envFromSecret: ""
+env: []
+
+# Run on a schedule instead of once.
+cronJob:
+  enabled: false
+  schedule: "0 3 * * 1"
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+
+job:
+  backoffLimit: 1
+  ttlSecondsAfterFinished: 86400
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 128Mi
+  limits:
+    memory: 512Mi
+
+podSecurityContext:
+  runAsNonRoot: true
+  runAsUser: 65532
+  runAsGroup: 65532
+  fsGroup: 65532
+  seccompProfile:
+    type: RuntimeDefault
+
+securityContext:
+  allowPrivilegeEscalation: false
+  readOnlyRootFilesystem: true
+  capabilities:
+    drop: [ALL]
+
+nodeSelector: {}
+tolerations: []
+affinity: {}

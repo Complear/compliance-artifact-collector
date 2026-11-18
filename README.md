@@ -34,7 +34,22 @@ You need two Complear repositories:
 (it holds the EU AI Act rules the Collector uses for scoping). A record that leaves the AI Act out
 (`"frameworks": []`) does not use the benchmark, so for that the Python install needs only `jsonschema`.
 
-**Option A: Docker** (nothing else to install; the image includes cosign)
+**Option A: the published image** (nothing to build; the image includes cosign)
+
+```sh
+docker pull ghcr.io/complear/compliance-artifact-collector:0.3.0
+```
+
+Each release is signed keylessly from this repository's release workflow, with its CycloneDX SBOM
+attached as a signed attestation. Check it before you use it:
+
+```sh
+cosign verify ghcr.io/complear/compliance-artifact-collector:0.3.0 \
+  --certificate-identity-regexp 'https://github.com/Complear/compliance-artifact-collector/.github/workflows/release-image.yml@.*' \
+  --certificate-oidc-issuer https://token.actions.githubusercontent.com
+```
+
+**Option B: build the image yourself**
 
 ```sh
 git clone https://github.com/Complear/compliance-artifact-collector.git
@@ -43,7 +58,7 @@ cd compliance-artifact-collector
 make image          # builds compliance-artifact-collector:0.3.0
 ```
 
-**Option B: Python 3.11+**
+**Option C: Python 3.11+**
 
 ```sh
 # the two clones side by side, as above
@@ -354,7 +369,59 @@ only, so confirm the facts with extra care for other languages. On the benchmark
 fact in particular. In Docker, pass the variables with `-e` and make sure the container can reach
 the endpoint.
 
-## 11. Warnings and errors
+## 11. In CI and on Kubernetes
+
+**GitHub Actions.** The repository is also an action. It runs the published image on your checkout:
+
+```yaml
+- uses: Complear/compliance-artifact-collector@main
+  with:
+    product: compliance/product.json        # paths relative to the repository root
+    out: compliance/record.json
+    sign-key: ${{ secrets.COSIGN_PRIVATE_KEY }}     # optional
+    cosign-password: ${{ secrets.COSIGN_PASSWORD }}
+    # push: "true", complear-url: ..., complear-upload-key: ${{ secrets.COMPLEAR_UPLOAD_KEY }}
+- uses: actions/upload-artifact@v4
+  with:
+    name: conformity-record
+    path: compliance/record.json*
+```
+
+**GitLab CI.** Include the job template and extend it:
+
+```yaml
+include:
+  - remote: https://raw.githubusercontent.com/Complear/compliance-artifact-collector/main/ci/gitlab/compliance-artifact-collector.gitlab-ci.yml
+
+conformity-record:
+  extends: .compliance-artifact-collector
+  variables:
+    CAC_PRODUCT: compliance/product.json
+```
+
+The record is kept as a job artefact. Optional CI/CD variables: `CAC_SIGN_KEY` (a *File* variable
+with a cosign key) and `COSIGN_PASSWORD`; `CAC_PUSH: "true"` with `COMPLEAR_URL` and
+`COMPLEAR_UPLOAD_KEY`; `TAI_TOKEN`.
+
+**Kubernetes.** `charts/compliance-artifact-collector` runs the Collector as a Job, or as a
+CronJob with `cronJob.enabled=true`. The input folder (product.json and the files it names) comes
+from `input.files` and `input.binaryFiles` (a ConfigMap; base64 for binary files such as PDFs) or `input.existingClaim` (a volume); the record goes to an
+`emptyDir` and is printed to the pod log, or to a volume with `output.persistence.enabled=true`.
+
+```sh
+helm install nodesight charts/compliance-artifact-collector \
+  --set-file 'input.files.product\.json=examples/nodesight/product.json' \
+  --set-file 'input.files.sbom\.cdx\.json=examples/nodesight/sbom.cdx.json' \
+  --set "input.binaryFiles.certificate\.pdf=$(base64 < examples/nodesight/certificate.pdf | tr -d '\n')"
+kubectl logs job/nodesight-compliance-artifact-collector
+```
+
+Signing takes `signing.enabled=true` and `signing.existingSecret` (keys `cosign.key`, optional
+`COSIGN_PASSWORD`); `envFromSecret` passes `TAI_*`, `COMPLEAR_*` or `READER_*` variables;
+`push.enabled=true` sends the record. Pin `image.digest` to run exactly a signed release. The pod
+runs as a non-root user with a read-only root filesystem.
+
+## 12. Warnings and errors
 
 | Message | Meaning, what to do |
 | --- | --- |

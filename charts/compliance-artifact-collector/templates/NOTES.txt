@@ -1,0 +1,7 @@
+The Collector runs as {{ if .Values.cronJob.enabled }}CronJob {{ include "cac.fullname" . }} ({{ .Values.cronJob.schedule }}){{ else }}Job {{ include "cac.fullname" . }}{{ end }}.
+{{- if .Values.output.persistence.enabled }}
+The record is written to /work/out/{{ .Values.output.file }} on PVC {{ include "cac.outputClaim" . }}.
+{{- else }}
+The record is printed at the end of the pod log:
+  kubectl logs job/{{ include "cac.fullname" . }}
+{{- end }}

@@ -1,0 +1,17 @@
+{{- if not .Values.cronJob.enabled }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ include "cac.fullname" . }}
+  labels:
+    {{- include "cac.labels" . | nindent 4 }}
+spec:
+  backoffLimit: {{ .Values.job.backoffLimit }}
+  ttlSecondsAfterFinished: {{ .Values.job.ttlSecondsAfterFinished }}
+  template:
+    metadata:
+      labels:
+        {{- include "cac.labels" . | nindent 8 }}
+    spec:
+      {{- include "cac.podSpec" . | nindent 6 }}
+{{- end }}
