@@ -387,7 +387,6 @@ the endpoint.
 
 ## Limits
 
-- TAI Scan results are entered by hand (or as JUnit/CTRF) until its output format is mapped.
 - Only the EU AI Act is scoped by the Collector; other frameworks' scopes are carried as supplied.
 - The default clause tags are Complear's reading of the AI Act; change any artefact's `supports`
   in `product.json` if your assessment differs.
@@ -395,6 +394,36 @@ the endpoint.
 - Image signature checking is tested against a stub; record signing and verification are tested
   with cosign 2.4.1.
 
+## Terms of use
+
+These terms apply to the Collector wherever you obtain it, including its listing on the AIoD
+Marketplace. They add nothing to, and take nothing from, the Apache License 2.0 (`LICENSE`), which
+governs your use, copying and modification of the code.
+
+- **Free of charge, as is.** The Collector is provided without warranties or conditions of any
+  kind and without liability, as set out in sections 7 and 8 of the licence.
+- **Not legal advice.** The Collector gathers and tags evidence. It does not decide whether the
+  evidence is sufficient, does not certify conformity, and does not replace a notified body, an
+  auditor or your own regulatory assessment. Its clause tags are Complear's reading of the AI Act
+  (see Limits).
+- **Your data stays with you.** The Collector runs in your own environment and sends nothing to
+  Complear. It contacts another service only when you ask it to, and that service's terms apply:
+  - AIoD TAI Scan (sign-in at `aiodp-auth.aiodp.ai`, then the TAI Scan API), with the five fields
+    of the `tai_scan` block, when you set `TAI_USER`/`TAI_PASS` or `TAI_TOKEN` (section 8a);
+  - the language-model endpoint you name in `READER_URL`, with `subject.description` (section 10);
+  - the public Sigstore log, with the record's hash, signature and public key, when you pass
+    `--transparency-log` (section 9);
+  - your own Complear workspace, with the record, when you run `push` (section 9).
+
+  Keep personal data out of the descriptions you send.
+- **Your records are yours.** You are responsible for the records you produce and share, and for
+  your right to include each piece of evidence in them.
+- **Complear OS is separate.** It is a commercial product under its own terms and conditions;
+  sending a record to it is governed by those terms.
+- **Support** is best effort, through GitHub issues on this repository, with no service levels.
+  Contact: contact@complear.com.
+- **Changes.** These terms are versioned with the code; the version in the release you use applies.
+
 ## Licence
 
-To be released under Apache 2.0 (see `LICENSE`). Built by Complear for AIoD, programme AGILE-AI.
+Apache 2.0 (see `LICENSE`). Built by Complear for AIoD, programme AGILE-AI.
