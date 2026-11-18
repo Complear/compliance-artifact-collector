@@ -29,7 +29,7 @@ jobs:
         with:
           repository: Complear/aiod-compliance-benchmark
           # Pinned so a release rebuild is reproducible and cannot pick up an unreviewed rule engine.
-          ref: ce48d5d609046a2dcb97c6e97b9c355af17778af
+          ref: 0d44a6af1b7e6b250f1ca600fb3b9beb9cfbfecb
           path: benchmark
       - name: Version
         id: version

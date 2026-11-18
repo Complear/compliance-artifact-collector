@@ -1,10 +1,10 @@
 {
   "schema_version": "0.3",
-  "record_id": "3a7fd0f9-5951-4a72-8392-fe6adc953641",
-  "created_at": "2026-11-17T04:54:50+00:00",
+  "record_id": "2e6267e7-03e3-474e-bca7-f02f90d4c529",
+  "created_at": "2026-11-18T13:45:27+00:00",
   "collector": {
     "name": "compliance-artifact-collector",
-    "version": "0.3.0"
+    "version": "0.3.1"
   },
   "subject": {
     "name": "NodeSight",
@@ -66,12 +66,16 @@
         "Art.18(1)",
         "Art.19(1)",
         "Art.20(1)",
+        "Art.4(1)",
         "Art.43(3)",
         "Art.47(1)",
         "Art.48",
         "Art.4a(1)",
         "Art.5(1)",
         "Art.6(1)",
+        "Art.6(1a)",
+        "Art.6(1b)",
+        "Art.6(1c)",
         "Art.72(1)",
         "Art.73(1)",
         "Art.9(1)",

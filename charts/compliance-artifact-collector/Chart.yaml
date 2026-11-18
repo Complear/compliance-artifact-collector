@@ -2,8 +2,8 @@ apiVersion: v2
 name: compliance-artifact-collector
 description: Runs the Compliance Artifact Collector as a Kubernetes Job (or CronJob) and writes a conformity record.
 type: application
-version: 0.1.0
-appVersion: "0.3.0"
+version: 0.1.1
+appVersion: "0.3.1"
 annotations:
   licenses: Apache-2.0
 home: https://github.com/Complear/compliance-artifact-collector
