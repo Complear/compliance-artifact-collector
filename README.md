@@ -25,6 +25,30 @@ product.json ──► 1. scope         which AI Act tier applies, which clauses
 The Collector collects and tags. It does **not** decide whether the evidence is sufficient, and
 it is not legal advice.
 
+## On the AI-on-Demand platform
+
+The Collector turns the output of AIoD services into evidence in the record:
+
+| AIoD service | What the Collector does with it |
+| --- | --- |
+| **AI Builder** with the **AI Testing Framework** (AITF, Fraunhofer IAIS) | Reads an executed AITF run, on the AI Builder's AI-Runner or a local one, and files it as an `evaluation` artefact with its metrics, clause tags and the hash of every input and output (step 7). The Collector does not start AITF runs itself. |
+| **TAI Scan** | Records TAI Scan's risk level as a `classification` artefact, a second opinion beside the Collector's own tier; it never changes the scope (step 8a). |
+| **AIoD account** | One sign-in for both: the AI Builder and TAI Scan use your AIoD account. |
+
+**From AIoD to a record:**
+
+1. Sign in to the AI Builder (https://ai-builder.aiodp.ai) with your AIoD account.
+2. Run an AITF test. Complear's EU AI Act benchmark is published there as the solution
+   **ComplearAITF** (catalogue *Public Models*, submitted on 18 Nov 2026 and listed once the catalogue
+   admins approve it). Deploy it, or your own AITF solution, to the AI-Runner and press **Run**.
+3. Take the executed run from the deployment's `/data` shared folder and list it in `product.json`:
+   `{"aitf": "data/modules/<run>/module.json"}` (step 7).
+4. Optionally add your TAI Scan result (step 8a), then run the Collector (step 9).
+
+**Getting the Collector:** a listing on the AIoD Marketplace is in preparation. Until then, take it
+from this repository or as the signed image `ghcr.io/complear/compliance-artifact-collector`
+(step 1). The terms of use below apply wherever you get it.
+
 ---
 
 ## 1. Install
