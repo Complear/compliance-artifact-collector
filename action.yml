@@ -41,7 +41,7 @@ inputs:
     default: ghcr.io/complear/compliance-artifact-collector
   version:
     description: The Collector image tag.
-    default: "0.3.1"
+    default: "0.3.2"
 
 outputs:
   record:

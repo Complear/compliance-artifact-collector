@@ -13,7 +13,7 @@
 
 .compliance-artifact-collector:
   image:
-    name: ghcr.io/complear/compliance-artifact-collector:0.3.1
+    name: ghcr.io/complear/compliance-artifact-collector:0.3.2
     entrypoint: [""]
   variables:
     CAC_PRODUCT: product.json
