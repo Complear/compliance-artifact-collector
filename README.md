@@ -37,14 +37,14 @@ You need two Complear repositories:
 **Option A: the published image** (nothing to build; the image includes cosign)
 
 ```sh
-docker pull ghcr.io/complear/compliance-artifact-collector:0.3.1
+docker pull ghcr.io/complear/compliance-artifact-collector:0.3.2
 ```
 
 Each release is signed keylessly from this repository's release workflow, with its CycloneDX SBOM
 attached as a signed attestation. Check it before you use it:
 
 ```sh
-cosign verify ghcr.io/complear/compliance-artifact-collector:0.3.1 \
+cosign verify ghcr.io/complear/compliance-artifact-collector:0.3.2 \
   --certificate-identity-regexp 'https://github.com/Complear/compliance-artifact-collector/.github/workflows/release-image.yml@refs/tags/v.*' \
   --certificate-oidc-issuer https://token.actions.githubusercontent.com
 ```
@@ -55,7 +55,7 @@ cosign verify ghcr.io/complear/compliance-artifact-collector:0.3.1 \
 git clone https://github.com/Complear/compliance-artifact-collector.git
 git clone https://github.com/Complear/aiod-compliance-benchmark.git
 cd compliance-artifact-collector
-make image          # builds compliance-artifact-collector:0.3.1
+make image          # builds compliance-artifact-collector:0.3.2
 ```
 
 **Option C: Python 3.11+**
@@ -91,7 +91,7 @@ body and certificate numbers are made up. Copy that folder as the starting point
 With Docker, mount your folder at `/work`:
 
 ```sh
-docker run --rm -v "$PWD/examples/nodesight:/work" compliance-artifact-collector:0.3.1 \
+docker run --rm -v "$PWD/examples/nodesight:/work" compliance-artifact-collector:0.3.2 \
   collect product.json --out out/record.json
 ```
 

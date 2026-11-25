@@ -11,6 +11,6 @@ example:
 	$(PY) -m cac collect examples/nodesight/product.json --out examples/nodesight/record.json
 
 image:
-	docker build --build-context benchmark=$(BENCHMARK) -t compliance-artifact-collector:0.3.1 .
+	docker build --build-context benchmark=$(BENCHMARK) -t compliance-artifact-collector:0.3.2 .
 
 .PHONY: setup test example image
