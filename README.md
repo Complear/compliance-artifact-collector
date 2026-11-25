@@ -143,9 +143,10 @@ given, with `"method": "supplied"`:
 `"<key>:<citation>"`, for example `"iso42001:9.1"`. A bare citation such as `"Art.15(3)"` means
 the EU AI Act. Set `"frameworks": []` to leave the AI Act out.
 
-### The AI Act: 11 facts
+### The AI Act: 11 facts and one optional
 
-The Collector decides the AI Act tier and the clauses in scope from 11 facts about your system.
+The Collector decides the AI Act tier and the clauses in scope from 11 facts about your system, plus
+`safety_component` for a medical device.
 **Give them yourself** in `"facts"` (recommended), or leave `"facts"` out and let a language model
 read them from `subject.description` (see step 10).
 
@@ -154,6 +155,7 @@ read them from `subject.description` (see step 10).
 | `ai_system` | true/false | the system infers outputs (predictions, recommendations, content, decisions) with machine learning or another learned method. Fixed hand-written rules are false. |
 | `prohibited_practice` | true/false | it does something Art. 5 bans: harmful manipulation, exploiting vulnerabilities, social scoring, crime prediction from profiling alone, untargeted face scraping, emotion recognition of workers or students (non-medical), biometric inference of sensitive traits, real-time remote identification in public for law enforcement. |
 | `mdr_class` | `none`, `I`, `IIa`, `IIb`, `III` | it is a medical device; use its MDR class. |
+| `safety_component` (optional, default true) | true/false | (only with an MDR class) the AI is the device itself or a safety component of it. Set false when it is used solely for non-safety aspects (user assistance, performance optimisation, service efficiency, automation, convenience, quality control) and its failure would not endanger health or safety (Art. 6(1a), 6(1b)); it is then not high-risk under Art. 6(1). |
 | `annex_iii_area` | `none`, `biometrics`, `critical_infrastructure`, `education`, `employment`, `essential_services`, `law_enforcement`, `migration`, `justice_democracy` | it is used in an Annex III area. Emergency patient triage and health-insurance pricing are `essential_services`. |
 | `art6_3_exception` | true/false | (only with an Annex III area) it only does a narrow procedural task, improves finished human work, flags patterns for a human, or prepares a human decision. |
 | `profiling` | true/false | it automatically evaluates personal aspects of individuals (health, behaviour, reliability, performance). Profiling cancels the Art. 6(3) exception. |
@@ -164,7 +166,7 @@ read them from `subject.description` (see step 10).
 | `emotion_or_biometric_categorisation` | true/false | it recognises emotions or sorts people by biometric data. |
 
 Tiers in the record: `out_of_scope`, `prohibited`, `high_risk_6_1` (regulated product such as an MDR
-class IIa+ device), `high_risk_6_2` (Annex III), `limited` (transparency duties only), `minimal`.
+class IIa+ device whose AI is a safety component), `high_risk_6_2` (Annex III), `limited` (transparency duties only), `minimal`.
 
 ## 5. SBOM
 
